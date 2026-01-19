@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCloud - MediaFire Clone</title>
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --dark-blue: #0056b3;
+            --bg-gray: #f4f7f6;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 { color: var(--primary-blue); margin-bottom: 1.5rem; }
+
+        input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: var(--dark-blue); }
+
+        .toggle-link {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+        }
+
+        /* Dashboard & Hidden States */
+        #dashboard, #signup-form, #login-form { display: none; }
+        .active { display: block !important; }
+
+        .file-list {
+            text-align: left;
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            background: #f9f9f9;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .download-btn {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-form" class="active">
+            <h2>MediaFire Login</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <p class="toggle-link" onclick="toggleForms('signup-form')">Don't have an account? Sign Up</p>
+        </div>
+
+        <div id="signup-form">
+            <h2>Create Account</h2>
+            <input type="text" placeholder="Full Name">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Create Password">
+            <button onclick="toggleForms('login-form')">Sign Up</button>
+            <p class="toggle-link" onclick="toggleForms('login-form')">Already have an account? Login</p>
+        </div>
+
+        <div id="dashboard">
+            <h2>My Files</h2>
+            <input type="file" id="fileInput">
+            <button onclick="uploadFile()">Upload File</button>
+            
+            <div class="file-list" id="fileList">
+                <strong>Your Files:</strong>
+                </div>
+            <button style="background: #666; margin-top: 20px;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleForms(formId) {
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('signup-form').classList.remove('active');
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById(formId).classList.add('active');
+        }
+
+        function login() {
+            // Simple validation logic
+            const email = document.getElementById('login-email').value;
+            if(email) {
+                toggleForms('dashboard');
+            } else {
+                alert("Please enter email");
+            }
+        }
+
+        function logout() {
+            toggleForms('login-form');
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                
+                // Create file item element
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <span>${fileName}</span>
+                    <a href="#" class="download-btn" onclick="alert('Downloading ${fileName}...')">Download</a>
+                `;
+                
+                fileList.appendChild(div);
+                fileInput.value = ''; // Reset input
+                alert("File uploaded successfully!");
+            } else {
+                alert("Please select a file first.");
+            }
+        }
+    </script>
+</body>
+</html>
+
