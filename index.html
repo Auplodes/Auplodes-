@@ -3,281 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCloud Pro - Premium Storage</title>
+    <title>MediaClone - Personal Cloud Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary: #0070f3;
-            --accent: #00c6ff;
-            --bg: #f0f2f5;
-            --sidebar: #ffffff;
-            --text: #333;
-            --glass: rgba(255, 255, 255, 0.8);
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            height: 100%;
-        }
-
-        /* --- Auth Sections --- */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #0070f3 0%, #00c6ff 100%);
-        }
-
-        .auth-card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 350px;
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        /* --- Dashboard Layout --- */
-        #dashboard {
-            display: none; /* Hidden by default */
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: var(--sidebar);
-            border-right: 1px solid #eee;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo { font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 30px; }
-
-        .nav-item {
-            padding: 12px;
-            margin: 5px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-
-        .nav-item:hover, .nav-item.active { background: #eef5ff; color: var(--primary); }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .search-bar {
-            width: 300px;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            background: white;
-        }
-
-        /* File Display */
-        .file-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .file-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            transition: 0.3s;
-            border: 1px solid #eee;
-            position: relative;
-        }
-
-        .file-card:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-
-        .file-icon { font-size: 40px; margin-bottom: 10px; display: block; }
-
-        .file-name {
-            font-size: 14px;
-            font-weight: 600;
-            display: block;
-            margin-bottom: 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .action-btns { display: flex; gap: 5px; justify-content: center; }
-
-        .btn-small {
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-
-        .copy-btn { background: #28a745; }
-
-        /* Helpers */
-        .hidden { display: none !important; }
+        .bg-media { background-color: #f3f5f7; }
+        .blue-gradient { background: linear-gradient(90deg, #007bff 0%, #0056b3 100%); }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
+<body class="bg-media">
 
-    <div id="auth-screen" class="auth-container">
-        <div class="auth-card" id="login-box">
-            <h2 style="color: var(--primary);">Welcome Back</h2>
-            <input type="email" id="email" placeholder="Email Address">
-            <input type="password" id="pass" placeholder="Password">
-            <button onclick="login()">Login to MyCloud</button>
-            <p style="font-size: 13px; color: #666; margin-top: 15px;">Secure Cloud Storage</p>
+    <nav class="blue-gradient p-4 text-white flex justify-between items-center shadow-lg">
+        <h1 class="text-2xl font-bold">MediaClone</h1>
+        <div id="user-info" class="flex items-center gap-4">
+            <span id="user-email" class="hidden text-sm"></span>
+            <button id="logout-btn" class="hidden bg-red-500 px-3 py-1 rounded text-sm">Logout</button>
         </div>
+    </nav>
+
+    <div id="auth-container" class="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-xl">
+        <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login to your account</h2>
+        <input type="email" id="email" placeholder="Email" class="w-full p-3 border mb-4 rounded">
+        <input type="password" id="password" placeholder="Password" class="w-full p-3 border mb-4 rounded">
+        <button id="auth-action-btn" class="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700">Login</button>
+        <p class="mt-4 text-center text-sm">
+            Don't have an account? <span id="toggle-auth" class="text-blue-600 cursor-pointer underline">Sign up here</span>
+        </p>
     </div>
 
-    <div id="dashboard" class="hidden">
-        <div class="sidebar">
-            <div class="logo">MyCloud.</div>
-            <div class="nav-item active">📂 All Files</div>
-            <div class="nav-item">⭐ Starred</div>
-            <div class="nav-item">🗑️ Trash</div>
-            <div style="margin-top: auto;">
-                <button onclick="logout()" style="background: #ff4757;">Logout</button>
-            </div>
+    <main id="dashboard" class="hidden container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg max-w-4xl">
+        <div class="text-center border-2 border-dashed border-gray-300 p-10 rounded-lg">
+            <h2 class="text-xl mb-4 font-semibold">Upload your files</h2>
+            <input type="file" id="fileInput" class="hidden">
+            <label for="fileInput" class="bg-blue-600 text-white px-6 py-3 rounded cursor-pointer hover:bg-blue-700 transition">
+                Select Files to Upload
+            </label>
+            <p id="upload-status" class="mt-4 text-sm font-medium text-blue-500"></p>
         </div>
 
-        <div class="main-content">
-            <div class="top-bar">
-                <input type="text" class="search-bar" id="searchFiles" placeholder="Search your files..." onkeyup="filterFiles()">
-                <div class="user-actions">
-                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload()">
-                    <button onclick="document.getElementById('fileInput').click()" style="width: auto; padding: 10px 25px;">+ Upload New</button>
-                </div>
+        <div class="mt-10">
+            <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Cloud Files</h3>
+            <div id="fileList" class="space-y-3">
+                <p class="text-gray-500">Scanning for files...</p>
             </div>
-
-            <h2 id="view-title">Recent Files</h2>
-            <div class="file-grid" id="fileGrid">
-                </div>
         </div>
-    </div>
+    </main>
 
-    <script>
-        let myFiles = [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        function login() {
-            const email = document.getElementById('email').value;
-            if(email.includes('@')) {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
+        // Your Firebase Configuration (Using the config you provided)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD6DXAvR8mkkNRd3jCqJYlZ45TZPoLCpcE",
+            authDomain: "auplodes-f9108.firebaseapp.com",
+            projectId: "auplodes-f9108",
+            storageBucket: "auplodes-f9108.firebasestorage.app",
+            messagingSenderId: "362749747108",
+            appId: "1:362749747108:web:613c05b336cd966859eb31",
+            measurementId: "G-EFRKXLN0W0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        // Elements
+        const authContainer = document.getElementById('auth-container');
+        const dashboard = document.getElementById('dashboard');
+        const emailInput = document.getElementById('email');
+        const passInput = document.getElementById('password');
+        const authBtn = document.getElementById('auth-action-btn');
+        const toggleAuth = document.getElementById('toggle-auth');
+        const authTitle = document.getElementById('auth-title');
+        const userEmailSpan = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        let isLogin = true;
+
+        // Toggle Login/Signup
+        toggleAuth.onclick = () => {
+            isLogin = !isLogin;
+            authTitle.innerText = isLogin ? "Login to your account" : "Create an account";
+            authBtn.innerText = isLogin ? "Login" : "Sign Up";
+            toggleAuth.innerText = isLogin ? "Sign up here" : "Login here";
+        };
+
+        // Auth Action
+        authBtn.onclick = async () => {
+            const email = emailInput.value;
+            const password = passInput.value;
+            try {
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+            } catch (err) { alert(err.message); }
+        };
+
+        // Logout
+        logoutBtn.onclick = () => signOut(auth);
+
+        // State Change (Check if user is logged in)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authContainer.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                userEmailSpan.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                userEmailSpan.innerText = user.email;
+                loadFiles(user.uid);
             } else {
-                alert("Please enter a valid email");
+                authContainer.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+                userEmailSpan.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
             }
-        }
+        });
 
-        function logout() {
-            location.clear data();
-        }
+        // File Upload
+        const fileInput = document.getElementById('fileInput');
+        const uploadStatus = document.getElementById('upload-status');
 
-        function handleFileUpload() {
-            const fileInput = document.getElementById('fileInput');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                
-                // Create a virtual Object URL to simulate a real download link
-                const fakeLink = URL.createObjectURL(file);
-                
-                const fileData = {
-                    id: Date.now(),
-                    name: file.name,
-                    size: (file.size / 1024).toFixed(1) + " KB",
-                    url: fakeLink
-                };
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            const user = auth.currentUser;
+            if (!file || !user) return;
 
-                myFiles.push(fileData);
-                renderFiles(myFiles);
-                fileInput.value = ''; // Reset
-            }
-        }
+            const fileRef = ref(storage, `users/${user.uid}/${file.name}`);
+            uploadStatus.innerText = "Uploading...";
 
-        function renderFiles(filesArray) {
-            const grid = document.getElementById('fileGrid');
-            grid.innerHTML = '';
+            try {
+                await uploadBytes(fileRef, file);
+                uploadStatus.innerText = "Upload Complete!";
+                loadFiles(user.uid);
+            } catch (err) { uploadStatus.innerText = "Error: " + err.message; }
+        };
 
-            filesArray.forEach(file => {
-                const card = document.createElement('div');
-                card.className = 'file-card';
-                card.innerHTML = `
-                    <span class="file-icon">📄</span>
-                    <span class="file-name" title="${file.name}">${file.name}</span>
-                    <div class="action-btns">
-                        <button class="btn-small" onclick="downloadFile('${file.url}', '${file.name}')">Download</button>
-                        <button class="btn-small copy-btn" onclick="copyLink('${file.url}')">Copy Link</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function downloadFile(url, name) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = name;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        function copyLink(url) {
-            // Note: In a real app, this would be a server URL (e.g., https://mycloud.com/d/xyz)
-            // For this demo, we use the Blob URL
-            navigator.clipboard.writeText(url);
-            alert("Share Link Copied! (You can paste this in a new tab)");
-        }
-
-        function filterFiles() {
-            const query = document.getElementById('searchFiles').value.toLowerCase();
-            const filtered = myFiles.filter(f => f.name.toLowerCase().includes(query));
-            renderFiles(filtered);
+        // Load Files
+        async function loadFiles(uid) {
+            const fileList = document.getElementById('fileList');
+            const listRef = ref(storage, `users/${uid}/`);
+            try {
+                const res = await listAll(listRef);
+                fileList.innerHTML = res.items.length ? "" : "No files yet.";
+                res.items.forEach(async (item) => {
+                    const url = await getDownloadURL(item);
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center p-4 bg-gray-50 border rounded shadow-sm";
+                    div.innerHTML = `
+                        <span class="truncate w-1/2">${item.name}</span>
+                        <a href="${url}" target="_blank" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Download</a>
+                    `;
+                    fileList.appendChild(div);
+                });
+            } catch (err) { console.error(err); }
         }
     </script>
 </body>
-</html>
+            </html>
+    
