@@ -3,165 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediaClone - Personal Cloud Storage</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Auplodes | MediaFire Premium Edition</title>
+    <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
     <style>
-        .bg-media { background-color: #f3f5f7; }
-        .blue-gradient { background: linear-gradient(90deg, #007bff 0%, #0056b3 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        :root {
+            --mf-blue: #007bff;
+            --mf-dark: #1a1c1e;
+            --mf-bg: #0d0e10;
+            --mf-card: #25282c;
+            --mf-border: #3a3f44;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--mf-bg);
+            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Rainbow Telegram Banner */
+        .rainbow-banner {
+            width: 100%; padding: 12px 0; text-align: center; font-weight: bold;
+            background: #000; border-bottom: 2px solid;
+            animation: mfRainbow 3s linear infinite;
+        }
+        @keyframes mfRainbow {
+            0% { border-color: red; color: red; }
+            33% { border-color: lime; color: lime; }
+            66% { border-color: blue; color: blue; }
+            100% { border-color: red; color: red; }
+        }
+
+        .header {
+            width: 100%; background: var(--mf-dark); padding: 15px 0;
+            text-align: center; border-bottom: 1px solid var(--mf-border);
+            font-size: 24px; font-weight: 700; color: var(--mf-blue);
+        }
+        .header span { color: white; }
+
+        .container {
+            width: 90%; max-width: 500px; margin: 40px auto;
+            background: var(--mf-card); border-radius: 12px;
+            padding: 30px; border: 1px solid var(--mf-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Form Styling */
+        input {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: #111; border: 1px solid var(--mf-border);
+            border-radius: 6px; color: white; box-sizing: border-box;
+        }
+        .btn-blue {
+            width: 100%; padding: 14px; background: var(--mf-blue);
+            color: white; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+
+        /* Premium Loading Bar (Left to Right) */
+        #upload-box { display: none; }
+        .progress-container {
+            width: 100%; background: #111; height: 12px;
+            border-radius: 10px; overflow: hidden; margin: 20px 0;
+            border: 1px solid var(--mf-border);
+        }
+        .progress-bar {
+            width: 0%; height: 100%; background: var(--mf-blue);
+            transition: width 0.3s; box-shadow: 0 0 15px var(--mf-blue);
+        }
+
+        /* Download View */
+        #download-view { display: none; text-align: center; }
+        .dl-btn {
+            background: #22c55e; color: white; padding: 18px 40px;
+            border-radius: 8px; text-decoration: none; font-weight: 800;
+            display: inline-block; margin-top: 20px; width: 80%;
+        }
+
         .hidden { display: none; }
+        footer { margin-top: 30px; color: #555; font-size: 12px; }
     </style>
 </head>
-<body class="bg-media">
+<body>
 
-    <nav class="blue-gradient p-4 text-white flex justify-between items-center shadow-lg">
-        <h1 class="text-2xl font-bold">MediaClone</h1>
-        <div id="user-info" class="flex items-center gap-4">
-            <span id="user-email" class="hidden text-sm"></span>
-            <button id="logout-btn" class="hidden bg-red-500 px-3 py-1 rounded text-sm">Logout</button>
-        </div>
-    </nav>
-
-    <div id="auth-container" class="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-xl">
-        <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-blue-600">Login to your account</h2>
-        <input type="email" id="email" placeholder="Email" class="w-full p-3 border mb-4 rounded">
-        <input type="password" id="password" placeholder="Password" class="w-full p-3 border mb-4 rounded">
-        <button id="auth-action-btn" class="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700">Login</button>
-        <p class="mt-4 text-center text-sm">
-            Don't have an account? <span id="toggle-auth" class="text-blue-600 cursor-pointer underline">Sign up here</span>
-        </p>
+    <div class="rainbow-banner">
+        <a href="https://t.me/+PvAMD5GrdcBkNDE1" target="_blank" style="color:inherit; text-decoration:none;">JOIN ANKIT X MODZ TELEGRAM</a>
     </div>
 
-    <main id="dashboard" class="hidden container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg max-w-4xl">
-        <div class="text-center border-2 border-dashed border-gray-300 p-10 rounded-lg">
-            <h2 class="text-xl mb-4 font-semibold">Upload your files</h2>
-            <input type="file" id="fileInput" class="hidden">
-            <label for="fileInput" class="bg-blue-600 text-white px-6 py-3 rounded cursor-pointer hover:bg-blue-700 transition">
-                Select Files to Upload
-            </label>
-            <p id="upload-status" class="mt-4 text-sm font-medium text-blue-500"></p>
+    <div class="header">Au<span>plodes</span></div>
+
+    <div class="container">
+        <div id="auth-view">
+            <h2 style="text-align:center; margin-top:0;">Create Account</h2>
+            <input type="text" id="fname" placeholder="Full Name">
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="text" id="uname" placeholder="Username">
+            <input type="password" id="pass" placeholder="Password (Min 8)">
+            <input type="password" id="cpass" placeholder="Confirm Password">
+            <button class="btn-blue" onclick="doRegister()">Register & Start</button>
         </div>
 
-        <div class="mt-10">
-            <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Cloud Files</h3>
-            <div id="fileList" class="space-y-3">
-                <p class="text-gray-500">Scanning for files...</p>
+        <div id="upload-box">
+            <h3 id="user-greet"></h3>
+            <p style="color:#888;">Select file to upload to Auplodes.in</p>
+            <input type="hidden" role="uploadcare-uploader" data-public-key="d2dac43b0699b5b058d8" id="uploader" />
+            
+            <div id="loading-ui" class="hidden">
+                <div style="display:flex; justify-content:space-between; font-size:14px;">
+                    <span>Uploading...</span>
+                    <span id="p-val" style="color:var(--mf-blue); font-weight:bold;">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="pb"></div>
+                </div>
             </div>
         </div>
-    </main>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        <div id="success-box" class="hidden">
+            <p style="color:#22c55e; font-weight:bold;">✅ Upload Success!</p>
+            <input type="text" id="share-link" readonly style="color:var(--mf-blue); font-weight:bold; cursor:pointer;" onclick="this.select()">
+            <button class="btn-blue" onclick="copyLink()">Copy Link</button>
+            <p style="font-size:11px; color:#555; margin-top:10px;">Link ends with Auplodes.in</p>
+        </div>
 
-        // Your Firebase Configuration (Using the config you provided)
-        const firebaseConfig = {
-            apiKey: "AIzaSyD6DXAvR8mkkNRd3jCqJYlZ45TZPoLCpcE",
-            authDomain: "auplodes-f9108.firebaseapp.com",
-            projectId: "auplodes-f9108",
-            storageBucket: "auplodes-f9108.firebasestorage.app",
-            messagingSenderId: "362749747108",
-            appId: "1:362749747108:web:613c05b336cd966859eb31",
-            measurementId: "G-EFRKXLN0W0"
-        };
+        <div id="download-view">
+            <div style="font-size:50px;">📦</div>
+            <h2 id="dl-name" style="word-break:break-all;">File Name</h2>
+            <p>Ready to download from Auplodes Premium Cloud</p>
+            <a href="#" id="dl-link" class="dl-btn">DOWNLOAD NOW</a>
+        </div>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const storage = getStorage(app);
+    <footer>© 2026 Auplodes.in | Powered by ANKIT X MODZ</footer>
 
-        // Elements
-        const authContainer = document.getElementById('auth-container');
-        const dashboard = document.getElementById('dashboard');
-        const emailInput = document.getElementById('email');
-        const passInput = document.getElementById('password');
-        const authBtn = document.getElementById('auth-action-btn');
-        const toggleAuth = document.getElementById('toggle-auth');
-        const authTitle = document.getElementById('auth-title');
-        const userEmailSpan = document.getElementById('user-email');
-        const logoutBtn = document.getElementById('logout-btn');
+    <script>
+        // Check if URL has file data (for friends opening the link)
+        const params = new URLSearchParams(window.location.search);
+        if(params.has('id')) {
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('download-view').style.display = 'block';
+            const name = params.get('n');
+            document.getElementById('dl-name').innerText = name;
+            document.getElementById('dl-link').href = `https://ucarecdn.com/${params.get('id')}/-/inline/no/${name}`;
+        }
 
-        let isLogin = true;
+        function doRegister() {
+            const name = document.getElementById('fname').value;
+            const pass = document.getElementById('pass').value;
+            const cpass = document.getElementById('cpass').value;
 
-        // Toggle Login/Signup
-        toggleAuth.onclick = () => {
-            isLogin = !isLogin;
-            authTitle.innerText = isLogin ? "Login to your account" : "Create an account";
-            authBtn.innerText = isLogin ? "Login" : "Sign Up";
-            toggleAuth.innerText = isLogin ? "Sign up here" : "Login here";
-        };
+            if(!name || pass.length < 8) return alert("Details sahi se bharein (Pass min 8)!");
+            if(pass !== cpass) return alert("Password match nahi hua!");
 
-        // Auth Action
-        authBtn.onclick = async () => {
-            const email = emailInput.value;
-            const password = passInput.value;
-            try {
-                if (isLogin) {
-                    await signInWithEmailAndPassword(auth, email, password);
-                } else {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                }
-            } catch (err) { alert(err.message); }
-        };
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('upload-box').style.display = 'block';
+            document.getElementById('user-greet').innerText = "Welcome, " + name;
+        }
 
-        // Logout
-        logoutBtn.onclick = () => signOut(auth);
-
-        // State Change (Check if user is logged in)
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                authContainer.classList.add('hidden');
-                dashboard.classList.remove('hidden');
-                userEmailSpan.classList.remove('hidden');
-                logoutBtn.classList.remove('hidden');
-                userEmailSpan.innerText = user.email;
-                loadFiles(user.uid);
-            } else {
-                authContainer.classList.remove('hidden');
-                dashboard.classList.add('hidden');
-                userEmailSpan.classList.add('hidden');
-                logoutBtn.classList.add('hidden');
-            }
+        const widget = uploadcare.Widget('#uploader');
+        widget.onUploadStart((file) => {
+            document.getElementById('loading-ui').classList.remove('hidden');
+            file.progress((info) => {
+                let p = Math.round(info.progress * 100);
+                document.getElementById('pb').style.width = p + '%';
+                document.getElementById('p-val').innerText = p + '%';
+            });
         });
 
-        // File Upload
-        const fileInput = document.getElementById('fileInput');
-        const uploadStatus = document.getElementById('upload-status');
+        widget.onUploadComplete((info) => {
+            document.getElementById('loading-ui').classList.add('hidden');
+            document.getElementById('success-box').classList.remove('hidden');
+            
+            // Link generator (Using current page for download)
+            const base = window.location.href.split('?')[0];
+            const final = `${base}?id=${info.uuid}&n=${encodeURIComponent(info.name)}&auth=Auplodes.in`;
+            document.getElementById('share-link').value = final;
+        });
 
-        fileInput.onchange = async (e) => {
-            const file = e.target.files[0];
-            const user = auth.currentUser;
-            if (!file || !user) return;
-
-            const fileRef = ref(storage, `users/${user.uid}/${file.name}`);
-            uploadStatus.innerText = "Uploading...";
-
-            try {
-                await uploadBytes(fileRef, file);
-                uploadStatus.innerText = "Upload Complete!";
-                loadFiles(user.uid);
-            } catch (err) { uploadStatus.innerText = "Error: " + err.message; }
-        };
-
-        // Load Files
-        async function loadFiles(uid) {
-            const fileList = document.getElementById('fileList');
-            const listRef = ref(storage, `users/${uid}/`);
-            try {
-                const res = await listAll(listRef);
-                fileList.innerHTML = res.items.length ? "" : "No files yet.";
-                res.items.forEach(async (item) => {
-                    const url = await getDownloadURL(item);
-                    const div = document.createElement('div');
-                    div.className = "flex justify-between items-center p-4 bg-gray-50 border rounded shadow-sm";
-                    div.innerHTML = `
-                        <span class="truncate w-1/2">${item.name}</span>
-                        <a href="${url}" target="_blank" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Download</a>
-                    `;
-                    fileList.appendChild(div);
-                });
-            } catch (err) { console.error(err); }
+        function copyLink() {
+            const copyText = document.getElementById("share-link");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Auplodes.in Link Copied!");
         }
     </script>
 </body>
-            </html>
-    
+    </html>
+                
